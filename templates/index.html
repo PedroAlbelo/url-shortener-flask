@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #2a2a3d;
+      padding: 40px;
+      border-radius: 12px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4f7cff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #3a63d8;
+    }
+    #result {
+      margin-top: 20px;
+      word-break: break-all;
+    }
+    #result a {
+      color: #4f9dff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>URL Shortener</h1>
+    <input type="text" id="urlInput" placeholder="Paste your URL here...">
+    <button onclick="shortenUrl()">Shorten</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function shortenUrl() {
+      const urlInput = document.getElementById("urlInput").value;
+      const resultDiv = document.getElementById("result");
+
+      if (!urlInput) {
+        resultDiv.innerHTML = "Please enter a URL first!";
+        return;
+      }
+
+      resultDiv.innerHTML = "Shortening...";
+
+      try {
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: urlInput })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `Short link: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+        } else {
+          resultDiv.innerHTML = "Error: " + data.error;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = "Error connecting to the server.";
+      }
+    }
+  </script>
+
+</body>
+</html>
