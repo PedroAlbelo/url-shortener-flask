@@ -4,7 +4,7 @@ import string
 
 app = Flask(__name__)
 
-# Temporary "database": short code -> original URL
+# Temporary database, short code -> original URL
 urls = {}
 
 def generate_code(length=6):
@@ -33,6 +33,10 @@ def shorten():
         "original_url": original_url,
         "short_url": f"http://127.0.0.1:5000/{code}"
     })
+
+@app.route("/history")
+def history():
+    return jsonify(urls)
 
 @app.route("/<code>")
 def redirect_to_url(code):
